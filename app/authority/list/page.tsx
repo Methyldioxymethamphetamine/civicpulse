@@ -1,7 +1,7 @@
 'use client';
 
 import { useReports } from '@/lib/queries';
-import ReportTable from '@/components/ReportTable';
+import AuthorityListView from '@/components/AuthorityListView';
 import { Loader2 } from 'lucide-react';
 
 export default function AuthorityListPage() {
@@ -25,19 +25,8 @@ export default function AuthorityListPage() {
   }
 
   return (
-    <div className="h-full overflow-y-auto p-4 md:p-6 slide-up">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-white mb-1" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-            Incident Directory
-          </h2>
-          <p className="text-sm text-slate-400">
-            View, filter, and track all reported public infrastructure issues.
-          </p>
-        </div>
-
-        <ReportTable reports={reports || []} />
-      </div>
+    <div className="h-full slide-up">
+      <AuthorityListView reports={reports || []} />
     </div>
   );
 }

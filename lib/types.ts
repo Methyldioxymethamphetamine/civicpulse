@@ -12,6 +12,8 @@ export interface Report {
   long: number;
   worker_id: string | null;
   admin_note: string | null;
+  upvotes: number;
+  downvotes: number;
 }
 
 export const CATEGORIES = [

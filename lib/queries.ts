@@ -218,3 +218,22 @@ export function useReassignReport() {
     },
   });
 }
+
+// ─── Vote on a report (upvote / downvote) ────────────────────────────────────
+export function useVoteReport() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { reportId: string; direction: 'up' | 'down' }) => {
+      const res = await fetch('/api/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('Vote failed');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
+    },
+  });
+}
