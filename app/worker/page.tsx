@@ -1,7 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useWorkerTasks } from '@/lib/queries';
+
+const FloatingLines = dynamic(() => import('@/components/FloatingLines'), { ssr: false });
 import WorkerTaskCard from '@/components/WorkerTaskCard';
 import { ArrowLeft, HardHat, Loader2, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -50,8 +53,24 @@ export default function WorkerPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[var(--civic-bg)] flex flex-col items-center justify-center p-4">
-        <div className="glass max-w-sm w-full p-8 text-center rounded-2xl">
+      <div className="relative min-h-screen bg-[var(--civic-bg)] flex flex-col items-center justify-center p-4 overflow-hidden">
+        {/* FloatingLines Background */}
+        <div className="fixed inset-0 z-0">
+          <FloatingLines
+            linesGradient={['#00ff15ff', '#2cc70dff', '#00ab06ff', '#38e509ff']}
+            enabledWaves={['top', 'middle', 'bottom']}
+            lineCount={[4, 6, 3]}
+            animationSpeed={0.8}
+            interactive={true}
+            parallax={true}
+            parallaxStrength={0.15}
+          />
+        </div>
+
+        {/* Readability overlay */}
+        <div className="fixed inset-0 z-[1] bg-gradient-to-b from-[var(--civic-bg)]/60 via-[var(--civic-bg)]/20 to-[var(--civic-bg)]/70 pointer-events-none" />
+
+        <div className="relative z-10 glass-frost max-w-sm w-full p-8 text-center rounded-3xl shadow-2xl shadow-black/50 border border-white/10 slide-up">
           <div className="w-16 h-16 rounded-2xl bg-amber-500/15 flex items-center justify-center mx-auto mb-6">
             <HardHat size={32} className="text-amber-400" />
           </div>
