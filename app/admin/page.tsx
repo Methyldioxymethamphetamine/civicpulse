@@ -75,9 +75,8 @@ export default function AdminPage() {
               <button
                 key={key}
                 onClick={() => setFilter(key)}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-                  filter === key ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400 hover:text-slate-200'
-                }`}
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${filter === key ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400 hover:text-slate-200'
+                  }`}
               >
                 {label}
               </button>
@@ -103,7 +102,7 @@ export default function AdminPage() {
                 >
                   {/* Thumbnail */}
                   {report.image_url && report.fix_image_url ? (
-                    /* Split Before/After for Treated entries */
+
                     <div className="relative grid grid-cols-2 aspect-[16/10] border-b border-white/6">
                       <div className="relative overflow-hidden">
                         <Image src={report.image_url} alt="Before" fill className="object-cover" />

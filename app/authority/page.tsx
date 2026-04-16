@@ -29,7 +29,7 @@ export default function AuthorityMapPage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-3 text-red-400">
-        <p>⚠️ Failed to load reports.</p>
+        <p>Failed to load reports.</p>
       </div>
     );
   }
