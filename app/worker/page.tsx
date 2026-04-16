@@ -61,14 +61,14 @@ export default function WorkerPage() {
           <p className="text-sm text-slate-400 mb-8">
             You must be logged in to view your assigned tasks.
           </p>
-          <form 
+          <form
             onSubmit={async (e) => {
               e.preventDefault();
               const email = (e.currentTarget.elements.namedItem('email') as HTMLInputElement).value;
               const password = (e.currentTarget.elements.namedItem('password') as HTMLInputElement).value;
               const { error } = await supabase.auth.signInWithPassword({ email, password });
               if (error) alert(error.message);
-            }} 
+            }}
             className="flex flex-col gap-3 text-left"
           >
             <input type="email" name="email" placeholder="Worker Email" required className="civic-input" />
@@ -79,7 +79,7 @@ export default function WorkerPage() {
           </form>
           <div className="mt-4 border-t border-white/10 pt-4">
             <p className="text-xs text-slate-400 mb-2">Need a worker account?</p>
-            <button 
+            <button
               type="button"
               onClick={async () => {
                 const email = prompt('Enter email to sign up as a new worker:');
@@ -133,20 +133,19 @@ export default function WorkerPage() {
       {/* Main Feed */}
       <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-grid">
         <div className="max-w-5xl mx-auto pb-12">
-          
+
           {/* Status Filters */}
           <div className="flex gap-2 p-1.5 glass rounded-xl mb-6 w-full max-w-fit mx-auto sm:mx-0 overflow-x-auto scroller-hidden">
-             {['All', 'Pending', 'In-Progress', 'Treated'].map((f) => (
-                <button
-                   key={f}
-                   onClick={() => setFilter(f as any)}
-                   className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-                     filter === f ? 'bg-amber-500/20 text-amber-400' : 'text-slate-400 hover:text-slate-200'
-                   }`}
-                >
-                  {f === 'Treated' ? 'Marked as Done' : f}
-                </button>
-             ))}
+            {['All', 'Pending', 'In-Progress', 'Treated'].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f as any)}
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${filter === f ? 'bg-amber-500/20 text-amber-400' : 'text-slate-400 hover:text-slate-200'
+                  }`}
+              >
+                {f === 'Treated' ? 'Marked as Done' : f}
+              </button>
+            ))}
           </div>
 
           {isLoading ? (
@@ -161,7 +160,7 @@ export default function WorkerPage() {
           ) : tasks && tasks.length > 0 ? (
             <div className="space-y-4">
               {tasks.map((task) => (
-                 <WorkerTaskCard key={task.id} report={task} />
+                <WorkerTaskCard key={task.id} report={task} />
               ))}
             </div>
           ) : (
