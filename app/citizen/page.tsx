@@ -40,7 +40,7 @@ export default function CitizenPage() {
         <div className="h-full flex flex-col lg:flex-row">
 
           {/* Left panel: Hero + info (desktop only, mobile stacks) */}
-          <div className="hidden lg:flex lg:w-[380px] xl:w-[420px] shrink-0 flex-col border-r border-white/6 bg-gradient-to-b from-blue-600/[0.04] to-transparent">
+          <div className="hidden lg:flex lg:w-[400px] xl:w-[500px] 2xl:w-[600px] shrink-0 flex-col border-r border-white/6 bg-gradient-to-b from-blue-600/[0.04] to-transparent transition-all duration-300">
             {/* Branding area */}
             <div className="p-6 xl:p-8 flex flex-col gap-6 flex-1">
               <div className="flex-1 flex flex-col justify-center">
@@ -86,8 +86,8 @@ export default function CitizenPage() {
 
           {/* Right panel: The Form */}
           <div className="flex-1 overflow-y-auto">
-            <div className="h-full flex items-start lg:items-center justify-center p-4 lg:p-8">
-              <div className="w-full max-w-lg">
+            <div className="h-full flex items-start lg:items-center justify-center p-4 lg:p-8 xl:p-12">
+              <div className="w-full max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-300">
                 {/* Mobile-only compact banner */}
                 <div className="lg:hidden mb-4 rounded-2xl bg-gradient-to-r from-blue-600/15 to-cyan-600/8 border border-blue-500/15 p-4">
                   <div className="flex items-center gap-3">
@@ -101,7 +101,7 @@ export default function CitizenPage() {
                   </div>
                 </div>
 
-                <div className="glass rounded-3xl p-5 lg:p-7 shadow-2xl shadow-black/30 border border-white/[0.06]">
+                <div className="glass rounded-3xl p-5 lg:p-8 xl:p-10 shadow-2xl shadow-black/30 border border-white/[0.06]">
                   <ReportForm />
                 </div>
               </div>

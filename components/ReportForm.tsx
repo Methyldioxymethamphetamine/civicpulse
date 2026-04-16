@@ -88,13 +88,13 @@ export default function ReportForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 xl:gap-6">
       {/* Photo Upload — compact */}
       <div>
         <label className="civic-label">Photo Evidence</label>
         <input id="photo-upload" type="file" accept="image/*" onChange={handleImage} className="hidden" />
         {preview ? (
-          <div className="relative w-full h-36 lg:h-40 rounded-2xl overflow-hidden border border-white/10">
+          <div className="relative w-full h-36 lg:h-40 xl:h-48 2xl:h-56 rounded-2xl overflow-hidden border border-white/10 transition-all duration-300">
             <Image src={preview} alt="Preview" fill className="object-cover" />
             <button
               type="button"
@@ -110,9 +110,9 @@ export default function ReportForm() {
         ) : (
           <label
             htmlFor="photo-upload"
-            className="cursor-pointer w-full h-28 lg:h-32 rounded-2xl border-2 border-dashed border-white/10 flex items-center justify-center gap-4 hover:border-blue-500/40 hover:bg-blue-500/[0.03] transition-all group"
+            className="cursor-pointer w-full h-28 lg:h-32 xl:h-48 2xl:h-56 rounded-2xl border-2 border-dashed border-white/10 flex items-center justify-center gap-4 hover:border-blue-500/40 hover:bg-blue-500/[0.03] transition-all duration-300 group"
           >
-            <div className="w-11 h-11 rounded-2xl bg-blue-500/10 border border-blue-500/15 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+            <div className="w-11 h-11 xl:w-12 xl:h-12 rounded-2xl bg-blue-500/10 border border-blue-500/15 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
               <Camera size={20} className="text-blue-400" />
             </div>
             <div>
@@ -124,7 +124,7 @@ export default function ReportForm() {
       </div>
 
       {/* Two-column row: Category + Location */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 xl:gap-5">
         {/* Category */}
         <div>
           <label className="civic-label">Issue Type</label>
@@ -203,7 +203,7 @@ export default function ReportForm() {
       <button
         type="submit"
         disabled={isPending || !coords || !description.trim()}
-        className="btn-primary w-full py-3.5 text-sm font-bold rounded-2xl mt-1 flex items-center justify-center gap-2 shadow-xl shadow-blue-900/20 hover:shadow-blue-900/40 transition-all group disabled:opacity-40"
+        className="btn-primary w-full py-3.5 xl:py-4 xl:text-base font-bold rounded-2xl mt-1 xl:mt-3 flex items-center justify-center gap-2 shadow-xl shadow-blue-900/20 hover:shadow-blue-900/40 transition-all group disabled:opacity-40"
       >
         {isPending ? (
           <><Loader2 size={16} className="animate-spin" /> Submitting…</>
