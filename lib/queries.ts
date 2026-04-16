@@ -122,7 +122,7 @@ export function useSubmitReport() {
         long: payload.long,
         image_url,
         status: 'Pending',
-      }).select().single();
+      } as any).select().single();
 
       if (error) throw error;
       return data;
@@ -151,7 +151,7 @@ export function useMarkResolved() {
 
       const { error } = await supabase
         .from('reports')
-        .update({ status: 'In-Progress', fix_image_url: urlData.publicUrl })
+        .update({ status: 'In-Progress', fix_image_url: urlData.publicUrl } as any)
         .eq('id', payload.reportId);
       if (error) throw error;
     },
@@ -169,7 +169,7 @@ export function useStartProgress() {
     mutationFn: async (reportId: string) => {
       const { error } = await supabase
         .from('reports')
-        .update({ status: 'In-Progress' })
+        .update({ status: 'In-Progress' } as any)
         .eq('id', reportId);
       if (error) throw error;
     },
