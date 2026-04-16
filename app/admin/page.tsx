@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useReports } from '@/lib/queries';
-import { ArrowLeft, ShieldCheck, Loader2, MapPin, CheckCircle2 } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, ShieldCheck, Loader2, MapPin, CheckCircle2, Lock, LogOut } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import type { Report, ReportStatus } from '@/lib/types';
 import StatusBadge from '@/components/StatusBadge';
 import { formatDistanceToNow } from 'date-fns';
@@ -14,7 +14,73 @@ const AdminDetailModal = dynamic(() => import('@/components/AdminDetailModal'), 
 
 type FilterType = 'All' | 'Pending' | 'In-Progress' | 'Treated' | 'Resolved';
 
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'civicpulse';
+
+/* ─── Login Gate ─────────────────────────────────────────────────────────── */
 export default function AdminPage() {
+  const [authed, setAuthed] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
+  useEffect(() => {
+    if (sessionStorage.getItem('admin-auth') === '1') setAuthed(true);
+  }, []);
+
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const user = (form.elements.namedItem('username') as HTMLInputElement).value;
+    const pass = (form.elements.namedItem('password') as HTMLInputElement).value;
+    if (user === ADMIN_USER && pass === ADMIN_PASS) {
+      sessionStorage.setItem('admin-auth', '1');
+      setAuthed(true);
+      setLoginError('');
+    } else {
+      setLoginError('Invalid username or password');
+    }
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('admin-auth');
+    setAuthed(false);
+  };
+
+  if (!authed) {
+    return (
+      <div className="relative min-h-screen bg-transparent flex flex-col items-center justify-center p-4">
+        <div className="relative z-10 glass-frost max-w-sm w-full p-8 text-center rounded-3xl shadow-2xl shadow-black/50 border border-white/10 slide-up">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 flex items-center justify-center mx-auto mb-6">
+            <Lock size={32} className="text-emerald-400" />
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+            Admin Access
+          </h2>
+          <p className="text-sm text-slate-400 mb-6">
+            Enter your credentials to access the admin panel.
+          </p>
+          <form onSubmit={handleLogin} className="flex flex-col gap-3 text-left">
+            <input type="text" name="username" placeholder="Username" required className="civic-input" autoComplete="username" />
+            <input type="password" name="password" placeholder="Password" required className="civic-input" autoComplete="current-password" />
+            {loginError && (
+              <p className="text-xs text-red-400 font-medium px-1">{loginError}</p>
+            )}
+            <button type="submit" className="btn-primary w-full mt-2">
+              Login to Admin Panel
+            </button>
+          </form>
+          <Link href="/" className="inline-block mt-5 text-sm text-slate-500 hover:text-white transition-colors">
+            Return to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return <AdminDashboard onLogout={handleLogout} />;
+}
+
+/* ─── Dashboard (shown after login) ──────────────────────────────────────── */
+function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const { data: allReports, isLoading, error } = useReports();
   const [filter, setFilter] = useState<FilterType>('All');
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -42,9 +108,9 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--civic-bg)] flex flex-col">
+    <div className="min-h-screen bg-transparent flex flex-col">
       {/* Header */}
-      <header className="shrink-0 flex items-center gap-4 px-4 py-3 border-b border-white/6 bg-[var(--civic-surface)]">
+      <header className="shrink-0 flex items-center gap-4 px-4 py-3 glass-header">
         <Link href="/" className="w-8 h-8 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors">
           <ArrowLeft size={14} className="text-slate-400" />
         </Link>
@@ -58,11 +124,20 @@ export default function AdminPage() {
           </p>
         </div>
 
-        {reports && (
-          <span className="ml-auto text-[11px] font-bold text-slate-500">
-            {reports.length} report{reports.length !== 1 ? 's' : ''}
-          </span>
-        )}
+        <div className="flex items-center gap-3 ml-auto">
+          {reports && (
+            <span className="text-[11px] font-bold text-slate-500">
+              {reports.length} report{reports.length !== 1 ? 's' : ''}
+            </span>
+          )}
+          <button
+            onClick={onLogout}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-slate-500 hover:text-white hover:bg-white/5 transition-all"
+          >
+            <LogOut size={12} />
+            Logout
+          </button>
+        </div>
       </header>
 
       {/* Main */}
@@ -105,11 +180,11 @@ export default function AdminPage() {
 
                     <div className="relative grid grid-cols-2 aspect-[16/10] border-b border-white/6">
                       <div className="relative overflow-hidden">
-                        <Image src={report.image_url} alt="Before" fill className="object-cover" />
+                        <Image src={report.image_url} alt="Before" fill className="object-cover" unoptimized />
                         <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-red-600/80 text-white text-[8px] font-bold">BEFORE</div>
                       </div>
                       <div className="relative overflow-hidden border-l border-white/10">
-                        <Image src={report.fix_image_url} alt="After" fill className="object-cover" />
+                        <Image src={report.fix_image_url} alt="After" fill className="object-cover" unoptimized />
                         <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-green-600/80 text-white text-[8px] font-bold">AFTER</div>
                       </div>
                       {/* Center divider icon */}
@@ -121,7 +196,7 @@ export default function AdminPage() {
                     </div>
                   ) : report.image_url ? (
                     <div className="relative aspect-[16/10] border-b border-white/6">
-                      <Image src={report.image_url} alt="Report" fill className="object-cover" />
+                      <Image src={report.image_url} alt="Report" fill className="object-cover" unoptimized />
                     </div>
                   ) : (
                     <div className="aspect-[16/10] border-b border-white/6 bg-white/[0.02] flex items-center justify-center">

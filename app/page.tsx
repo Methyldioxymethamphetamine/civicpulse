@@ -67,7 +67,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="relative h-screen overflow-hidden bg-[var(--civic-bg)] flex flex-col">
+    <div className="relative h-screen overflow-hidden bg-transparent flex flex-col">
       {/* Aurora Background */}
       <div className="fixed inset-0 z-0">
         <Aurora
