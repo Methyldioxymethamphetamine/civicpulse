@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { MapPin, Camera, ShieldCheck, HardHat, ArrowRight, Radio, Zap } from 'lucide-react';
+import { useGlobalStats } from '@/lib/queries';
 
 const Aurora = dynamic(() => import('@/components/Aurora'), { ssr: false });
 
@@ -57,13 +58,14 @@ const ROLES = [
   },
 ];
 
-const STATS = [
-  { label: 'Avg. Response Time', value: '< 48h', icon: Zap },
-  { label: 'Issues Resolved', value: '12,400+', icon: ShieldCheck },
-  { label: 'Cities Active', value: '38', icon: Radio },
-];
-
 export default function LandingPage() {
+  const { data: stats } = useGlobalStats();
+
+  const dynamicStats = [
+    { label: 'Reported Problems', value: stats?.reported?.toLocaleString() ?? '•••', icon: Camera },
+    { label: 'Solved Problems', value: stats?.resolved?.toLocaleString() ?? '•••', icon: ShieldCheck },
+  ];
+
   return (
     <div className="relative h-screen overflow-hidden bg-[var(--civic-bg)] flex flex-col">
       {/* Aurora Background */}
@@ -87,7 +89,7 @@ export default function LandingPage() {
           <div className="text-center mb-8 slide-up">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-frost text-blue-400 text-xs font-semibold mb-5 shadow-lg shadow-blue-900/10">
               <Radio size={12} className="animate-pulse" />
-              Live Infrastructure Monitoring
+              Live Incidents Monitoring
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
@@ -100,7 +102,7 @@ export default function LandingPage() {
 
           {/* Stats — horizontal row */}
           <div className="flex justify-center gap-4 mb-8 slide-up" style={{ animationDelay: '0.1s' }}>
-            {STATS.map(({ label, value, icon: Icon }) => (
+            {dynamicStats.map(({ label, value, icon: Icon }) => (
               <div key={label} className="glass-frost rounded-2xl px-6 py-3 flex items-center gap-3 hover:scale-105 transition-transform duration-300">
                 <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
                   <Icon size={16} className="text-blue-400" />
@@ -145,7 +147,7 @@ export default function LandingPage() {
 
           {/* Footer */}
           <div className="text-center mt-6 text-[11px] text-slate-600">
-            Built for the Infrastructure Hackathon · Powered by Supabase &amp; Next.js
+            Built with ‪‪❤︎‬ · By Team Nexus
           </div>
         </div>
       </div>

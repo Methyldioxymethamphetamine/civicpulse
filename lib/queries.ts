@@ -26,6 +26,31 @@ export function useReports(statusFilter?: ReportStatus) {
   });
 }
 
+// ─── Fetch global stats ──────────────────────────────────────────────────────
+export function useGlobalStats() {
+  return useQuery({
+    queryKey: ['global-stats'],
+    queryFn: async () => {
+      const { count: totalCount, error: totalError } = await supabase
+        .from('reports')
+        .select('*', { count: 'exact', head: true });
+      if (totalError) throw totalError;
+
+      const { count: resolvedCount, error: resolvedError } = await supabase
+        .from('reports')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'Resolved');
+      if (resolvedError) throw resolvedError;
+
+      return {
+        reported: totalCount || 0,
+        resolved: resolvedCount || 0,
+      };
+    },
+    refetchInterval: 30_000,
+  });
+}
+
 // ─── Fetch worker's assigned tasks ───────────────────────────────────────────
 export function useWorkerTasks(workerId: string | undefined) {
   return useQuery<Report[]>({
