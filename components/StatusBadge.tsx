@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 const STATUS_DOT: Record<ReportStatus, string> = {
   Pending: 'bg-red-400',
   'In-Progress': 'bg-amber-400',
+  Treated: 'bg-cyan-400',
   Resolved: 'bg-green-400',
   Rejected: 'bg-gray-400',
 };
