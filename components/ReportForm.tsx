@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { Camera, MapPin, Loader2, CheckCircle2, AlertCircle, X, ChevronDown, Sparkles } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { Camera, MapPin, Loader2, CheckCircle2, AlertCircle, X, ChevronDown, Sparkles, Map } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSubmitReport } from '@/lib/queries';
 import { CATEGORIES } from '@/lib/types';
 import Image from 'next/image';
+
+const MapPicker = dynamic(() => import('@/components/MapPicker'), { ssr: false });
 
 export default function ReportForm() {
   const [description, setDescription] = useState('');
@@ -15,7 +18,9 @@ export default function ReportForm() {
   const [coords, setCoords] = useState<{ lat: number; long: number } | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showMapPicker, setShowMapPicker] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const geoIgnoredRef = useRef(false);
 
   const { mutateAsync, isPending } = useSubmitReport();
 
@@ -33,15 +38,18 @@ export default function ReportForm() {
       return;
     }
 
+    geoIgnoredRef.current = false;
     setGeoLoading(true);
     try {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
+          if (geoIgnoredRef.current) return; // User picked via map, ignore GPS result
           setCoords({ lat: pos.coords.latitude, long: pos.coords.longitude });
           setGeoLoading(false);
           toast.success('Location captured!');
         },
         (err) => {
+          if (geoIgnoredRef.current) return;
           setGeoLoading(false);
           toast.error('Location denied. Falling back to test coords.');
           setCoords({ lat: 20.12345, long: 73.54321 });
@@ -159,20 +167,34 @@ export default function ReportForm() {
               </button>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={getLocation}
-              disabled={geoLoading}
-              className="w-full flex items-center justify-center gap-2 h-[42px] rounded-xl border border-white/10 bg-white/[0.03] hover:bg-blue-500/8 hover:border-blue-500/40 transition-all"
-            >
-              {geoLoading
-                ? <Loader2 size={14} className="text-blue-400 animate-spin" />
-                : <MapPin size={14} className="text-blue-400" />
-              }
-              <span className="text-xs font-medium text-slate-300">
-                {geoLoading ? 'Getting location…' : 'Tap to capture GPS'}
-              </span>
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={getLocation}
+                disabled={geoLoading}
+                className="flex-1 flex items-center justify-center gap-2 h-[42px] rounded-xl border border-white/10 bg-white/[0.03] hover:bg-blue-500/8 hover:border-blue-500/40 transition-all"
+              >
+                {geoLoading
+                  ? <Loader2 size={14} className="text-blue-400 animate-spin" />
+                  : <MapPin size={14} className="text-blue-400" />
+                }
+                <span className="text-xs font-medium text-slate-300">
+                  {geoLoading ? 'Getting…' : 'Auto GPS'}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  geoIgnoredRef.current = true; // Cancel any pending GPS result
+                  setGeoLoading(false);
+                  setShowMapPicker(true);
+                }}
+                className="flex items-center justify-center gap-2 h-[42px] px-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-violet-500/8 hover:border-violet-500/40 transition-all"
+              >
+                <Map size={14} className="text-violet-400" />
+                <span className="text-xs font-medium text-slate-300">Map</span>
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -214,6 +236,20 @@ export default function ReportForm() {
           </>
         )}
       </button>
+
+      {/* Map Picker Modal */}
+      {showMapPicker && (
+        <MapPicker
+          onConfirm={(lat, long) => {
+            geoIgnoredRef.current = true; // Ensure late GPS can't overwrite
+            setCoords({ lat, long });
+            setShowMapPicker(false);
+            setGeoLoading(false);
+            toast.success('Location selected from map!');
+          }}
+          onClose={() => setShowMapPicker(false)}
+        />
+      )}
     </form>
   );
 }
