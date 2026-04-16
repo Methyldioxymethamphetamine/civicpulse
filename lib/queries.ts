@@ -115,13 +115,30 @@ export function useSubmitReport() {
         image_url = urlData.publicUrl;
       }
 
+      // Check for spam via our Gemini API route
+      let isSpam = false;
+      try {
+        const spamRes = await fetch('/api/report/spam-check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ description: payload.description, category: payload.category }),
+        });
+        if (spamRes.ok) {
+          const spamData = await spamRes.json();
+          isSpam = spamData.isSpam;
+        }
+      } catch (e) {
+        console.error('Failed to check spam status', e);
+      }
+
       const { data, error } = await supabase.from('reports').insert({
         description: payload.description,
         category: payload.category,
         lat: payload.lat,
         long: payload.long,
         image_url,
-        status: 'Pending',
+        status: isSpam ? 'Likely Spam' : 'Pending',
+        downvotes: isSpam ? 1 : 0,
       } as any).select().single();
 
       if (error) throw error;

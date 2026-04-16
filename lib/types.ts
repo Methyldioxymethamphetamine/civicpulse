@@ -1,4 +1,4 @@
-export type ReportStatus = 'Pending' | 'In-Progress' | 'Resolved' | 'Rejected' | 'Treated';
+export type ReportStatus = 'Pending' | 'In-Progress' | 'Resolved' | 'Rejected' | 'Treated' | 'Likely Spam';
 
 export interface Report {
   id: string;
@@ -36,6 +36,7 @@ export const STATUS_COLORS: Record<ReportStatus, string> = {
   Treated: '#06b6d4',
   Resolved: '#22c55e',
   Rejected: '#6b7280',
+  'Likely Spam': '#dc2626',
 };
 
 export const STATUS_BG: Record<ReportStatus, string> = {
@@ -44,4 +45,5 @@ export const STATUS_BG: Record<ReportStatus, string> = {
   Treated: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
   Resolved: 'bg-green-500/15 text-green-400 border-green-500/30',
   Rejected: 'bg-gray-500/15 text-gray-400 border-gray-500/30',
+  'Likely Spam': 'bg-red-800/15 text-red-600 border-red-800/30',
 };
